@@ -1,4 +1,4 @@
-define(['Phaser'], function () {
+define(['Phaser', 'inc/game-state'], function (Phaser, gameState) {
 	
 
 	function create () {
@@ -10,8 +10,8 @@ define(['Phaser'], function () {
 	    background.scale.setTo(8,6);
 	    background.anchor.setTo(0.5, 0.5);
 
-	    icon = game.add.sprite(game.world.centerX, game.world.centerY, 'icon');
-	    icon.anchor.setTo(0.5,0.5);
+	    game.state.add('play', gameState);
+	    game.state.start('play', true, false);
 	    
     }
 
