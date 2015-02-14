@@ -1,32 +1,24 @@
 requirejs.config({
   //baseUrl: 'js',
   paths: {
-    Phaser:   'lib/phaser.min',
-    preload:  'inc/preload',
-    create:   'inc/create',
-    update:   'inc/update'
+    Phaser:   'lib/phaser.min'
   }
 });
 
 require([
-    'Phaser'
+    'Phaser',
+    'inc/preload',
+    'inc/create',
+    'inc/update'
 ], function (
-    Phaser
+    Phaser,
+    preload,
+    create,
+    update
 ) {
 
-        var game = new Phaser.Game(800, 600, Phaser.AUTO, '', { preload: preload, create: create });
+        app.game = new Phaser.Game(800, 600, Phaser.AUTO, '', { preload: preload, create: create, update: update });
 
-        function preload () {
-
-            game.load.image('logo', 'phaser.png');
-
-        }
-
-        function create () {
-
-            var logo = game.add.sprite(game.world.centerX, game.world.centerY, 'logo');
-            logo.anchor.setTo(0.5, 0.5);
-
-    };
+        
 
 });   
