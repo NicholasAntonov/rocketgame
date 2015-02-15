@@ -6,12 +6,6 @@ define(['Phaser', 'inc/game-state'], function (Phaser, gameState) {
 			background,
 			icon;
 
-		game.physics.startSystem(Phaser.Physics.P2JS);
-		
-	    background = game.add.sprite(game.world.centerX, game.world.centerY, 'background');
-	    background.scale.setTo(8,6);
-	    background.anchor.setTo(0.5, 0.5);
-
 
 
 	    game.state.add('play', gameState);
