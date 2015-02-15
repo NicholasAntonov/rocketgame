@@ -13,11 +13,20 @@ define([
 		obj1.body.force.y = Math.sin(angle) * speed;
 	}
 
+	function squaredDistance(body1, body2) {
+		return Math.pow(body1.body.x - body2.body.x, 2) + Math.pow(body1.body.y - body2.body.y, 2);
+	}
+
+	function gravitationalForce (body1, body2) {
+		var G = 6.674e-11;
+		return 10000000 * body1.body.mass * body2.body.mass / squaredDistance(body1, body2);
+
+	}
+
 
 	gameState.prototype = {
 		create : function () {
-			var game = app.game,
-				bodies;
+			var game = app.game;
 
 			game.physics.startSystem(Phaser.Physics.P2JS);
 		    game.physics.p2.defaultRestitution = 0.8;
@@ -27,12 +36,12 @@ define([
 	    	this.background.anchor.setTo(0.5, 0.5);
 
 
-	    	// Bodies
-	    	bodies = game.add.group();
+	    	// this.bodies
+	    	this.bodies = game.add.group();
 
-		    	this.meteor = bodies.create(50, 50, 'meteor');
+		    	this.meteor = this.bodies.create(50, 50, 'meteor');
 		    	game.physics.p2.enable(this.meteor);
-		    	this.meteor2 = bodies.create(250, 250, 'meteor');
+		    	this.meteor2 = this.bodies.create(250, 250, 'meteor');
 		    	game.physics.p2.enable(this.meteor2);
 
 		    this.rocket = game.add.sprite(game.world.centerX, game.world.centerY, 'rocket');
@@ -51,11 +60,25 @@ define([
 
 		update : function () {
 			var game = app.game,
+				that = this,
+				largestForce,
 				closestBody;
 
+			function scaledDistanceToRocket(body) {
+				return Math.pow(that.rocket.body.x - body.body.x, 2) + Math.pow(that.rocket.body.y - body.body.y, 2);
+			}
 
+			this.bodies.forEachAlive(function (body) {
+				var distance = scaledDistanceToRocket(body),
+					force = gravitationalForce(body, that.rocket) ;
 
-			accelerateToObject(this.rocket, this.meteor);
+				if (closestBody === undefined || force > largestForce) {
+					largestForce = force;
+					closestBody = body;
+				}
+			}, this);
+
+			accelerateToObject(this.rocket, closestBody, largestForce);
 
 			if (this.cursors.left.isDown)
 		    {
