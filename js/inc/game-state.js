@@ -33,7 +33,14 @@ define([
 
 		    game.stage.backgroundColor = '#5E3F6B';
 
+		    game.world.setBounds(-1000, -1000, 2000, 2000);
 
+
+
+		    for (var i = 0; i < 200; i++)
+		    {
+		        game.add.sprite(game.world.randomX, game.world.randomY, 'mushroom');
+		    }
 	    	// this.bodies
 	    	this.bodies = game.add.group();
 
