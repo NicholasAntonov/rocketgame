@@ -1,10 +1,23 @@
-define(['Phaser'], function (Phaser) {
+define([
+	'Phaser'
+], function (
+	Phaser
+) {
 	
 	var gameState = function (game) {};
 
+	function accelerateToObject (obj1, obj2, speed) {
+		if (typeof speed === 'undefined') { speed = 60; }
+		var angle = Math.atan2(obj2.y - obj1.y, obj2.x - obj1.x);
+		obj1.body.force.x = Math.cos(angle) * speed;
+		obj1.body.force.y = Math.sin(angle) * speed;
+	}
+
+
 	gameState.prototype = {
 		create : function () {
-			var game = app.game;
+			var game = app.game,
+				bodies;
 
 			game.physics.startSystem(Phaser.Physics.P2JS);
 		    game.physics.p2.defaultRestitution = 0.8;
@@ -13,8 +26,14 @@ define(['Phaser'], function (Phaser) {
 	    	this.background.scale.setTo(8,6);
 	    	this.background.anchor.setTo(0.5, 0.5);
 
-		    this.meteor = game.add.sprite(0, 0, 'meteor');
-		    game.physics.p2.enable(this.meteor);
+
+	    	// Bodies
+	    	bodies = game.add.group();
+
+		    	this.meteor = bodies.create(50, 50, 'meteor');
+		    	game.physics.p2.enable(this.meteor);
+		    	this.meteor2 = bodies.create(250, 250, 'meteor');
+		    	game.physics.p2.enable(this.meteor2);
 
 		    this.rocket = game.add.sprite(game.world.centerX, game.world.centerY, 'rocket');
 		    game.physics.p2.enable(this.rocket);
@@ -31,7 +50,12 @@ define(['Phaser'], function (Phaser) {
 		},
 
 		update : function () {
-			var game = app.game;
+			var game = app.game,
+				closestBody;
+
+
+
+			accelerateToObject(this.rocket, this.meteor);
 
 			if (this.cursors.left.isDown)
 		    {
