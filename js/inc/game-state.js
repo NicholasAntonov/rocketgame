@@ -19,7 +19,7 @@ define([
 
 	function gravitationalForce (body1, body2) {
 		var G = 6.674e-11;
-		return 10000000 * body1.body.mass * body2.body.mass / squaredDistance(body1, body2);
+		return 5000000 * body1.body.mass * body2.body.mass / squaredDistance(body1, body2);
 
 	}
 
