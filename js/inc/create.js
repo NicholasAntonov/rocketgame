@@ -1,4 +1,4 @@
-define(['Phaser', 'inc/game-state'], function (Phaser, gameState) {
+define(['Phaser', 'inc/game-state', 'inc/menu-state'], function (Phaser, gameState, menuState) {
 	
 
 	function create () {
@@ -13,9 +13,9 @@ define(['Phaser', 'inc/game-state'], function (Phaser, gameState) {
 	    background.anchor.setTo(0.5, 0.5);
 
 
-
 	    game.state.add('play', gameState);
-	    game.state.start('play', true, false);
+	    game.state.add('menu', menuState);
+	    game.state.start('menu', true, false);
 	    
 
     }
