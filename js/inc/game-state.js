@@ -31,9 +31,7 @@ define([
 			game.physics.startSystem(Phaser.Physics.P2JS);
 		    game.physics.p2.defaultRestitution = 0.8;
 
-			this.background = game.add.sprite(game.world.centerX, game.world.centerY, 'background');
-	    	this.background.scale.setTo(8,6);
-	    	this.background.anchor.setTo(0.5, 0.5);
+		    game.stage.backgroundColor = '#5E3F6B';
 
 
 	    	// this.bodies
@@ -64,13 +62,8 @@ define([
 				largestForce,
 				closestBody;
 
-			function scaledDistanceToRocket(body) {
-				return Math.pow(that.rocket.body.x - body.body.x, 2) + Math.pow(that.rocket.body.y - body.body.y, 2);
-			}
-
 			this.bodies.forEachAlive(function (body) {
-				var distance = scaledDistanceToRocket(body),
-					force = gravitationalForce(body, that.rocket) ;
+				var force = gravitationalForce(body, that.rocket) ;
 
 				if (closestBody === undefined || force > largestForce) {
 					largestForce = force;
