@@ -129,13 +129,14 @@ define([
 
             game.camera.follow(this.rocket.ship);
 
-            app.scoreText = game.add.text(32, 550, 'score: 0', { font: "20px Arial", fill: "#ffffff", align: "left" });
+            app.scoreText = game.add.text(32, 50, 'score: 0', { font: "20px Arial", fill: "#ffffff", align: "left" });
             app.scoreText.fixedToCamera = true;
             app.score = 0;
 
-            app.fuelText = game.add.text(32, 150, 'fuel: 0', { font: "20px Arial", fill: "#ffffff", align: "left" });
-            app.fuelText.fixedToCamera = true;
             app.fuel = 1000;
+            app.fuelText = game.add.text(32, 550, 'fuel: ' + app.fuel, { font: "20px Arial", fill: "#ffffff", align: "left" });
+            app.fuelText.fixedToCamera = true;
+            
         },
 
         update : function () {
@@ -172,6 +173,9 @@ define([
                 this.rocket.flare.visible = false;
             }
 
+            if (app.fuel < 0) {
+            	game.state.start('end', true, false);
+            }
 
         },
 
