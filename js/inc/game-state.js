@@ -28,12 +28,14 @@ define([
 		create : function () {
 			var game = app.game;
 
+			// Set bounds has to be called before start system for collision with bounds
+			game.world.setBounds(-1000, -1000, 2000, 2000);
 			game.physics.startSystem(Phaser.Physics.P2JS);
 		    game.physics.p2.defaultRestitution = 0.8;
 
 		    game.stage.backgroundColor = '#5E3F6B';
 
-		    game.world.setBounds(-1000, -1000, 2000, 2000);
+		    
 
 
 
@@ -49,7 +51,7 @@ define([
 		    	this.meteor2 = this.bodies.create(250, 250, 'meteor');
 		    	game.physics.p2.enable(this.meteor2);
 
-		    this.rocket = game.add.sprite(game.world.centerX, game.world.centerY, 'rocket');
+		    this.rocket = game.add.sprite(300, 300, 'rocket');
 		    game.physics.p2.enable(this.rocket);
 			
 
@@ -97,6 +99,15 @@ define([
 		    {
 		    	this.rocket.body.thrust(400);
 		    }
+		},
+
+		render : function () {
+			var game = app.game;
+
+			if (app.debug) {
+				game.debug.cameraInfo(game.camera, 32, 32);
+    			game.debug.spriteCoords(this.rocket, 32, 500);
+			}
 		}
 	}
 
