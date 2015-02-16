@@ -25,6 +25,12 @@ define([
 
 	}
 
+    function pickUpStar(rocket, star) {
+        app.score += 10;
+        app.scoreText.text = 'score: ' + app.score;
+        star.safeDestroy = true;
+    }
+
 
 	gameState.prototype = {
 		create : function () {
@@ -92,6 +98,7 @@ define([
             rocketShip = game.add.sprite(350, 350, 'rocket');
             rocketFlare = game.add.sprite(-7, 35, 'rocket-flare');
             rocketShip.addChild(rocketFlare);
+            rocketShip.anchor.setTo(20, 20);
             game.add.sprite(rocketShip);
             game.physics.p2.enable(rocketShip, app.debug, false);
 
@@ -107,11 +114,6 @@ define([
                 flare: rocketFlare
             };
 
-            function pickUpStar(rocket, star) {
-            	star.safeDestroy = true;
-            	app.score += 10;
-            	app.scoreText.text = 'score: ' + app.score;
-            }
 
             for (i = 0; i < 50; i += 1) {
                 game.add.sprite(game.world.randomX, game.world.randomY, 'small-star');
@@ -119,10 +121,10 @@ define([
 
                 //currentStar = this.collectables.create(game.world.randomX, game.world.randomY, 'goldstar');
                 currentStar = game.add.sprite(game.world.randomX, game.world.randomY, 'goldstar', undefined, this.collectables);
-                //game.physics.p2.enable(currentStar, app.debug);
-                //currentStar.body.clearShapes();
+                currentStar.anchor.setTo(0.5, 0.5);
+                game.physics.p2.enable(currentStar, app.debug);
 
-                //this.rocket.ship.body.createBodyCallback(currentStar, pickUpStar, that);
+                this.rocket.ship.body.createBodyCallback(currentStar, pickUpStar, that);
             }
 
             this.cursors = game.input.keyboard.createCursorKeys();
@@ -152,11 +154,7 @@ define([
             }, this);
 
             this.collectables.forEachAlive(function (sprite) {
-                /*if (sprite.body.safeDestroy === true) {
-                    sprite.kill();
-                }*/
-                if (Phaser.Rectangle.intersects(this.rocket.ship.getBounds(), sprite.getBounds())) {
-                    console.log(sprite.getBounds());
+                if (sprite.body.safeDestroy === true) {
                     sprite.kill();
                 }
             }, this);
