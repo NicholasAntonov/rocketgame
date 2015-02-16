@@ -119,9 +119,11 @@ define([
                 game.add.sprite(game.world.randomX, game.world.randomY, 'big-star');
 
                 //currentStar = this.collectables.create(game.world.randomX, game.world.randomY, 'goldstar');
-                currentStar = game.add.sprite(game.world.randomX, game.world.randomY, 'goldstar');
-                game.physics.p2.enable(currentStar, app.debug);
-                this.rocket.ship.body.createBodyCallback(currentStar, pickUpStar, that);
+                currentStar = game.add.sprite(game.world.randomX, game.world.randomY, 'goldstar', undefined, this.collectables);
+                //game.physics.p2.enable(currentStar, app.debug);
+                //currentStar.body.clearShapes();
+
+                //this.rocket.ship.body.createBodyCallback(currentStar, pickUpStar, that);
             }
 
             this.cursors = game.input.keyboard.createCursorKeys();
@@ -143,6 +145,16 @@ define([
                 if (closestBody === undefined || force > largestForce) {
                     largestForce = force;
                     closestBody = body;
+                }
+            }, this);
+
+            this.collectables.forEachAlive(function (sprite) {
+                /*if (sprite.body.safeDestroy === true) {
+                    sprite.kill();
+                }*/
+                if (Phaser.Rectangle.intersects(this.rocket.ship.getBounds(), sprite.getBounds())) {
+                    console.log(sprite.getBounds());
+                    sprite.kill();
                 }
             }, this);
 
