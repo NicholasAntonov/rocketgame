@@ -30,7 +30,27 @@ define([
             var game = app.game,
                 i,
                 rocketShip,
-                rocketFlare;
+                rocketFlare,
+
+                // FIXME: Put these coords in a JSON file and load them
+
+                rocketCollisionMaskPoints = [
+                    -7, -38,
+                    7, -38,
+                    50, 0,
+                    50, 30,
+                    0, 38,
+                    -50, 30,
+                    -50, 0
+                ],
+                meteorCollisionMaskPoints = [
+                    15, -48,
+                    49, -15,
+                    30, 43,
+                    -25, 48,
+                    -49, 10,
+                    -40, -40
+                ];
 
             // Set bounds has to be called before start system for collision with bounds
             game.world.setBounds(-1000, -1000, 2000, 2000);
@@ -41,27 +61,42 @@ define([
 
 
 
-
-
             for (i = 0; i < 50; i += 1) {
                 game.add.sprite(game.world.randomX, game.world.randomY, 'small-star');
                 game.add.sprite(game.world.randomX, game.world.randomY, 'big-star');
             }
-            // this.bodies
+            
+
+            // FIXME: Give meteors their own function, so they can be added at will
+            //        without repeating 4 lines of code for each meteor
+
             this.bodies = game.add.group();
 
             this.meteor = this.bodies.create(50, 50, 'meteor');
-            game.physics.p2.enable(this.meteor);
+            game.physics.p2.enable(this.meteor, app.debug);
+            this.meteor.body.clearShapes();
+            this.meteor.body.addPolygon(null, meteorCollisionMaskPoints.slice(0));
+
             this.meteor2 = this.bodies.create(250, 250, 'meteor');
-            game.physics.p2.enable(this.meteor2);
+            game.physics.p2.enable(this.meteor2, app.debug);
+            this.meteor2.body.clearShapes();
+            this.meteor2.body.addPolygon(null, meteorCollisionMaskPoints.slice(0));
 
 
             // The rocket!
+            // FIXME: The rocket should probably have its own constructor as well,
+            //        just to keep a consistent pattern (and keep it clean)
+
             rocketShip = game.add.sprite(300, 300, 'rocket');
             rocketFlare = game.add.sprite(-7, 35, 'rocket-flare');
             rocketShip.addChild(rocketFlare);
             game.add.sprite(rocketShip);
-            game.physics.p2.enable(rocketShip, false, false);
+            game.physics.p2.enable(rocketShip, app.debug, false);
+
+            // Set the rocket to collide with meteors
+            rocketShip.body.clearShapes();
+            rocketShip.body.addPolygon(null, rocketCollisionMaskPoints);
+
 
             // Careful -- be sure to use this.rocket.ship instead of this.rocket when
             // referring to the physical body
