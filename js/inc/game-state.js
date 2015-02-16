@@ -72,13 +72,13 @@ define([
 
             this.bodies = game.add.group();
 
-            this.meteor = this.bodies.create(50, 50, 'meteor', app.debug);
+            this.meteor = this.bodies.create(50, 50, 'meteor');
             game.physics.p2.enable(this.meteor, app.debug);
             this.meteor.body.mass = 5000000;
             this.meteor.body.clearShapes();
             this.meteor.body.addPolygon(null, meteorCollisionMaskPoints.slice(0));
 
-            this.meteor2 = this.bodies.create(250, 250, 'meteor', app.debug);
+            this.meteor2 = this.bodies.create(250, 250, 'meteor');
             game.physics.p2.enable(this.meteor2, app.debug);
             this.meteor2.body.mass = 5000000;
             this.meteor2.body.clearShapes();
@@ -89,7 +89,7 @@ define([
             // FIXME: The rocket should probably have its own constructor as well,
             //        just to keep a consistent pattern (and keep it clean)
 
-            rocketShip = game.add.sprite(350, 350, 'rocket', app.debug);
+            rocketShip = game.add.sprite(350, 350, 'rocket');
             rocketFlare = game.add.sprite(-7, 35, 'rocket-flare');
             rocketShip.addChild(rocketFlare);
             game.add.sprite(rocketShip);
@@ -108,10 +108,9 @@ define([
             };
 
             function pickUpStar(rocket, star) {
-            	if (app.debug) {
-            		console.log("star being picked up");
-            	}
             	star.safeDestroy = true;
+            	app.score += 10;
+            	app.scoreText.text = 'score: ' + app.score;
             }
 
             for (i = 0; i < 50; i += 1) {
@@ -129,6 +128,10 @@ define([
             game.physics.p2.setImpactEvents(true);
 
             game.camera.follow(this.rocket.ship);
+
+            app.scoreText = game.add.text(32, 550, 'score: 0', { font: "20px Arial", fill: "#ffffff", align: "left" });
+            app.scoreText.fixedToCamera = true;
+            app.score = 0;
         },
 
         update : function () {
