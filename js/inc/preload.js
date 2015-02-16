@@ -13,6 +13,7 @@ define(['Phaser'], function () {
         game.load.image('big-star', '/images/sprites/Background/starBig.png');
         game.load.image('startButton', '/images/ui/blue_button00.png');
         game.load.image('meteor', '/images/sprites/Meteors/meteorBrown_big4.png');
+        game.load.image('goldstar', '/images/platformerpack/Base pack/Items/star.png')
     }
 
     return preload;

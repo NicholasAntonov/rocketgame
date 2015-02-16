@@ -29,6 +29,8 @@ define([
 	gameState.prototype = {
 		create : function () {
             var game = app.game,
+            	that = this,
+            	currentStar,
                 i,
                 rocketShip,
                 rocketFlare,
@@ -60,12 +62,9 @@ define([
 
             game.stage.backgroundColor = '#5E3F6B';
 
+            this.collectables = game.add.group();
 
 
-            for (i = 0; i < 50; i += 1) {
-                game.add.sprite(game.world.randomX, game.world.randomY, 'small-star');
-                game.add.sprite(game.world.randomX, game.world.randomY, 'big-star');
-            }
             
 
             // FIXME: Give meteors their own function, so they can be added at will
@@ -107,6 +106,23 @@ define([
                 ship: rocketShip,
                 flare: rocketFlare
             };
+
+            function pickUpStar(rocket, star) {
+            	if (app.debug) {
+            		console.log("star being picked up");
+            	}
+            	star.safeDestroy = true;
+            }
+
+            for (i = 0; i < 50; i += 1) {
+                game.add.sprite(game.world.randomX, game.world.randomY, 'small-star');
+                game.add.sprite(game.world.randomX, game.world.randomY, 'big-star');
+
+                //currentStar = this.collectables.create(game.world.randomX, game.world.randomY, 'goldstar');
+                currentStar = game.add.sprite(game.world.randomX, game.world.randomY, 'goldstar');
+                game.physics.p2.enable(currentStar);
+                this.rocket.ship.body.createBodyCallback(currentStar, pickUpStar, that);
+            }
 
             this.cursors = game.input.keyboard.createCursorKeys();
 
