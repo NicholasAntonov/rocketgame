@@ -71,8 +71,10 @@ define([
             this.collectables = game.add.group();
 
 
-            
-
+            for (i = 0; i < 50; i += 1) {
+                game.add.sprite(game.world.randomX, game.world.randomY, 'small-star');
+                game.add.sprite(game.world.randomX, game.world.randomY, 'big-star');
+            }
             // FIXME: Give meteors their own function, so they can be added at will
             //        without repeating 4 lines of code for each meteor
 
@@ -116,8 +118,6 @@ define([
 
 
             for (i = 0; i < 50; i += 1) {
-                game.add.sprite(game.world.randomX, game.world.randomY, 'small-star');
-                game.add.sprite(game.world.randomX, game.world.randomY, 'big-star');
 
                 //currentStar = this.collectables.create(game.world.randomX, game.world.randomY, 'goldstar');
                 currentStar = game.add.sprite(game.world.randomX, game.world.randomY, 'goldstar', undefined, this.collectables);
@@ -136,6 +136,10 @@ define([
             app.scoreText = game.add.text(32, 550, 'score: 0', { font: "20px Arial", fill: "#ffffff", align: "left" });
             app.scoreText.fixedToCamera = true;
             app.score = 0;
+
+            app.fuelText = game.add.text(32, 150, 'fuel: 0', { font: "20px Arial", fill: "#ffffff", align: "left" });
+            app.fuelText.fixedToCamera = true;
+            app.fuel = 1000;
         },
 
         update : function () {
@@ -171,10 +175,14 @@ define([
 
             if (this.cursors.up.isDown) {
                 this.rocket.ship.body.thrust(400);
+                app.fuel -= 1;
+            	app.fuelText.text = 'fuel: ' + app.fuel;
                 this.rocket.flare.visible = true;
             } else {
                 this.rocket.flare.visible = false;
             }
+
+
         },
 
 		render : function () {
