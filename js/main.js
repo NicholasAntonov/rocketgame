@@ -22,5 +22,5 @@ require([
 
     app.game = new Phaser.Game(800, 600, Phaser.AUTO, '', { preload: preload, create: create, update: update });
 
-    app.debug = true;
+    app.debug = false;
 });
