@@ -1,9 +1,11 @@
+/*global define, app*/
+
 define([
-	'Phaser'
+    'Phaser'
 ], function (
-	Phaser
+    Phaser
 ) {
-	
+	"use strict";
 	var gameState = function (game) {};
 
 	function accelerateToObject (obj1, obj2, speed) {
@@ -26,93 +28,132 @@ define([
 
 	gameState.prototype = {
 		create : function () {
-			var game = app.game;
+            var game = app.game,
+                i,
+                rocketShip,
+                rocketFlare,
 
-			// Set bounds has to be called before start system for collision with bounds
-			game.world.setBounds(-1000, -1000, 2000, 2000);
-			game.physics.startSystem(Phaser.Physics.P2JS);
-		    game.physics.p2.defaultRestitution = 0.8;
+                // FIXME: Put these coords in a JSON file and load them
 
-		    game.stage.backgroundColor = '#5E3F6B';
+                rocketCollisionMaskPoints = [
+                    -7, -38,
+                    7, -38,
+                    50, 0,
+                    50, 30,
+                    0, 38,
+                    -50, 30,
+                    -50, 0
+                ],
+                meteorCollisionMaskPoints = [
+                    15, -48,
+                    49, -15,
+                    30, 43,
+                    -25, 48,
+                    -49, 10,
+                    -40, -40
+                ];
 
-		    
+            // Set bounds has to be called before start system for collision with bounds
+            game.world.setBounds(-1000, -1000, 2000, 2000);
+            game.physics.startSystem(Phaser.Physics.P2JS);
+            game.physics.p2.defaultRestitution = 0.8;
+
+            game.stage.backgroundColor = '#5E3F6B';
 
 
 
-		    for (var i = 0; i < 50; i++)
-		    {
-		        game.add.sprite(game.world.randomX, game.world.randomY, 'small-star');
-		        game.add.sprite(game.world.randomX, game.world.randomY, 'big-star');
-		    }
-	    	// this.bodies
-	    	this.bodies = game.add.group();
+            for (i = 0; i < 50; i += 1) {
+                game.add.sprite(game.world.randomX, game.world.randomY, 'small-star');
+                game.add.sprite(game.world.randomX, game.world.randomY, 'big-star');
+            }
+            
 
-		    	this.meteor = this.bodies.create(50, 50, 'meteor');
-		    	game.physics.p2.enable(this.meteor, app.debug);
-		   		this.meteor.body.mass = 5000000;
-		    	this.meteor2 = this.bodies.create(250, 250, 'meteor');
-		    	game.physics.p2.enable(this.meteor2, app.debug);
-		    	this.meteor2.body.mass = 5000000;
+            // FIXME: Give meteors their own function, so they can be added at will
+            //        without repeating 4 lines of code for each meteor
 
-		    this.rocket = game.add.sprite(300, 300, 'rocket');
-		    game.physics.p2.enable(this.rocket, app.debug);
-			
+            this.bodies = game.add.group();
 
-			game.camera.follow(this.rocket);
+            this.meteor = this.bodies.create(50, 50, 'meteor', app.debug);
+            game.physics.p2.enable(this.meteor, app.debug);
+            this.meteor.body.mass = 5000000;
+            this.meteor.body.clearShapes();
+            this.meteor.body.addPolygon(null, meteorCollisionMaskPoints.slice(0));
 
-		    this.cursors = game.input.keyboard.createCursorKeys();
+            this.meteor2 = this.bodies.create(250, 250, 'meteor', app.debug);
+            game.physics.p2.enable(this.meteor2, app.debug);
+            this.meteor2.body.mass = 5000000;
+            this.meteor2.body.clearShapes();
+            this.meteor2.body.addPolygon(null, meteorCollisionMaskPoints.slice(0));
 
-		    
 
-		    game.camera.follow(this.rocket);
+            // The rocket!
+            // FIXME: The rocket should probably have its own constructor as well,
+            //        just to keep a consistent pattern (and keep it clean)
 
-		},
+            rocketShip = game.add.sprite(350, 350, 'rocket', app.debug);
+            rocketFlare = game.add.sprite(-7, 35, 'rocket-flare');
+            rocketShip.addChild(rocketFlare);
+            game.add.sprite(rocketShip);
+            game.physics.p2.enable(rocketShip, app.debug, false);
 
-		update : function () {
-			var game = app.game,
-				that = this,
-				largestForce,
-				closestBody;
+            // Set the rocket to collide with meteors
+            rocketShip.body.clearShapes();
+            rocketShip.body.addPolygon(null, rocketCollisionMaskPoints);
 
-			this.bodies.forEachAlive(function (body) {
-				var force = gravitationalForce(body, that.rocket) ;
 
-				if (closestBody === undefined || force > largestForce) {
-					largestForce = force;
-					closestBody = body;
-				}
-			}, this);
+            // Careful -- be sure to use this.rocket.ship instead of this.rocket when
+            // referring to the physical body
+            this.rocket = {
+                ship: rocketShip,
+                flare: rocketFlare
+            };
 
-			accelerateToObject(this.rocket, closestBody, largestForce);
+            this.cursors = game.input.keyboard.createCursorKeys();
 
-			if (this.cursors.left.isDown)
-		    {
-				this.rocket.body.rotateLeft(100);
-		    }
-		    else if (this.cursors.right.isDown)
-		    {
-				this.rocket.body.rotateRight(100);
-		    }
-		    else
-		    {
-				this.rocket.body.setZeroRotation();
-		    }
+            game.camera.follow(this.rocket.ship);
+        },
 
-		    if (this.cursors.up.isDown)
-		    {
-		    	this.rocket.body.thrust(400);
-		    }
-		},
+        update : function () {
+            var game = app.game,
+                that = this,
+                largestForce,
+                closestBody;
+
+            this.bodies.forEachAlive(function (body) {
+                var force = gravitationalForce(body, that.rocket.ship);
+
+                if (closestBody === undefined || force > largestForce) {
+                    largestForce = force;
+                    closestBody = body;
+                }
+            }, this);
+
+            accelerateToObject(this.rocket.ship, closestBody, largestForce);
+
+            if (this.cursors.left.isDown) {
+                this.rocket.ship.body.rotateLeft(100);
+            } else if (this.cursors.right.isDown) {
+                this.rocket.ship.body.rotateRight(100);
+            } else {
+                this.rocket.ship.body.setZeroRotation();
+            }
+
+            if (this.cursors.up.isDown) {
+                this.rocket.ship.body.thrust(400);
+                this.rocket.flare.visible = true;
+            } else {
+                this.rocket.flare.visible = false;
+            }
+        },
 
 		render : function () {
 			var game = app.game;
 
 			if (app.debug) {
 				game.debug.cameraInfo(game.camera, 32, 32);
-    			game.debug.spriteCoords(this.rocket, 32, 500);
+    			game.debug.spriteCoords(this.rocket.ship, 32, 500);
 			}
 		}
 	}
-
-	return gameState;
-})
+    return gameState;
+});

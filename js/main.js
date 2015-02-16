@@ -1,8 +1,10 @@
+/*global requirejs, app*/
+
 requirejs.config({
-  //baseUrl: 'js',
-  paths: {
-    Phaser:   'lib/phaser.min'
-  }
+    //baseUrl: 'js',
+    paths: {
+        Phaser:   'lib/phaser.min'
+    }
 });
 
 require([
@@ -16,9 +18,9 @@ require([
     create,
     update
 ) {
+    'use strict';
 
-        app.game = new Phaser.Game(800, 600, Phaser.AUTO, '', { preload: preload, create: create, update: update });
+    app.game = new Phaser.Game(800, 600, Phaser.AUTO, '', { preload: preload, create: create, update: update });
 
-        app.debug = true;
-
-});   
+    app.debug = true;
+});
