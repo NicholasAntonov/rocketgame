@@ -25,6 +25,12 @@ define([
 
 	}
 
+    function pickUpStar(rocket, star) {
+        app.score += 10;
+        app.scoreText.text = 'score: ' + app.score;
+        star.safeDestroy = true;
+    }
+
 
 	gameState.prototype = {
 		create : function () {
@@ -34,6 +40,7 @@ define([
                 i,
                 rocketShip,
                 rocketFlare,
+                currentMeteor,
 
                 // FIXME: Put these coords in a JSON file and load them
 
@@ -74,17 +81,13 @@ define([
 
             this.bodies = game.add.group();
 
-            this.meteor = this.bodies.create(50, 50, 'meteor');
-            game.physics.p2.enable(this.meteor, app.debug);
-            this.meteor.body.mass = 5000000;
-            this.meteor.body.clearShapes();
-            this.meteor.body.addPolygon(null, meteorCollisionMaskPoints.slice(0));
-
-            this.meteor2 = this.bodies.create(250, 250, 'meteor');
-            game.physics.p2.enable(this.meteor2, app.debug);
-            this.meteor2.body.mass = 5000000;
-            this.meteor2.body.clearShapes();
-            this.meteor2.body.addPolygon(null, meteorCollisionMaskPoints.slice(0));
+            for (i = 0; i < 10; i += 1) {
+                currentMeteor = this.bodies.create(game.world.randomX, game.world.randomY, 'meteor');
+                game.physics.p2.enable(currentMeteor, app.debug);
+                currentMeteor.body.mass = 5000000;
+                currentMeteor.body.clearShapes();
+                currentMeteor.body.addPolygon(null, meteorCollisionMaskPoints.slice(0));
+            }
 
 
             // The rocket!
@@ -94,6 +97,7 @@ define([
             rocketShip = game.add.sprite(350, 350, 'rocket');
             rocketFlare = game.add.sprite(-7, 35, 'rocket-flare');
             rocketShip.addChild(rocketFlare);
+            rocketShip.anchor.setTo(20, 20);
             game.add.sprite(rocketShip);
             game.physics.p2.enable(rocketShip, app.debug, false);
 
@@ -109,17 +113,15 @@ define([
                 flare: rocketFlare
             };
 
-            function pickUpStar(rocket, star) {
-            	star.safeDestroy = true;
-            	app.score += 10;
-            	app.scoreText.text = 'score: ' + app.score;
-            }
 
             for (i = 0; i < 50; i += 1) {
 
                 //currentStar = this.collectables.create(game.world.randomX, game.world.randomY, 'goldstar');
-                currentStar = game.add.sprite(game.world.randomX, game.world.randomY, 'goldstar');
+                currentStar = game.add.sprite(game.world.randomX, game.world.randomY, 'goldstar', undefined, this.collectables);
+                currentStar.anchor.setTo(0.5, 0.5);
                 game.physics.p2.enable(currentStar, app.debug);
+                currentStar.body.mass = 0.0001;
+
                 this.rocket.ship.body.createBodyCallback(currentStar, pickUpStar, that);
             }
 
@@ -151,6 +153,12 @@ define([
                 if (closestBody === undefined || force > largestForce) {
                     largestForce = force;
                     closestBody = body;
+                }
+            }, this);
+
+            this.collectables.forEachAlive(function (sprite) {
+                if (sprite.body.safeDestroy === true) {
+                    sprite.kill();
                 }
             }, this);
 
