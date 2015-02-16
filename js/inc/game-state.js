@@ -60,6 +60,13 @@ define([
                     -25, 48,
                     -49, 10,
                     -40, -40
+                ],
+                starCollisionMaskPoints = [
+                    0, -15,
+                    15, -4,
+                    10, 20,
+                    -10, 20,
+                    -15, -4
                 ];
 
             // Set bounds has to be called before start system for collision with bounds
@@ -97,13 +104,12 @@ define([
             rocketShip = game.add.sprite(350, 350, 'rocket');
             rocketFlare = game.add.sprite(-7, 35, 'rocket-flare');
             rocketShip.addChild(rocketFlare);
-            rocketShip.anchor.setTo(20, 20);
             game.add.sprite(rocketShip);
             game.physics.p2.enable(rocketShip, app.debug, false);
 
             // Set the rocket to collide with meteors
             rocketShip.body.clearShapes();
-            rocketShip.body.addPolygon(null, rocketCollisionMaskPoints);
+            rocketShip.body.addPolygon(null, rocketCollisionMaskPoints.slice(0));
 
 
             // Careful -- be sure to use this.rocket.ship instead of this.rocket when
@@ -118,8 +124,9 @@ define([
 
                 //currentStar = this.collectables.create(game.world.randomX, game.world.randomY, 'goldstar');
                 currentStar = game.add.sprite(game.world.randomX, game.world.randomY, 'goldstar', undefined, this.collectables);
-                currentStar.anchor.setTo(0.5, 0.5);
                 game.physics.p2.enable(currentStar, app.debug);
+                currentStar.body.clearShapes();
+                currentStar.body.addPolygon(null, starCollisionMaskPoints.slice(0));
                 currentStar.body.mass = 0.0001;
 
                 this.rocket.ship.body.createBodyCallback(currentStar, pickUpStar, that);
