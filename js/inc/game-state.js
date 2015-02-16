@@ -19,7 +19,7 @@ define([
 
 	function gravitationalForce (body1, body2) {
 		var G = 6.674e-11;
-		return 5000000 * body1.body.mass * body2.body.mass / squaredDistance(body1, body2);
+		return body1.body.mass * body2.body.mass / squaredDistance(body1, body2);
 
 	}
 
@@ -48,12 +48,14 @@ define([
 	    	this.bodies = game.add.group();
 
 		    	this.meteor = this.bodies.create(50, 50, 'meteor');
-		    	game.physics.p2.enable(this.meteor);
+		    	game.physics.p2.enable(this.meteor, app.debug);
+		   		this.meteor.body.mass = 5000000;
 		    	this.meteor2 = this.bodies.create(250, 250, 'meteor');
-		    	game.physics.p2.enable(this.meteor2);
+		    	game.physics.p2.enable(this.meteor2, app.debug);
+		    	this.meteor2.body.mass = 5000000;
 
 		    this.rocket = game.add.sprite(300, 300, 'rocket');
-		    game.physics.p2.enable(this.rocket);
+		    game.physics.p2.enable(this.rocket, app.debug);
 			
 
 			game.camera.follow(this.rocket);
