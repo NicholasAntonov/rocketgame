@@ -120,11 +120,13 @@ define([
 
                 //currentStar = this.collectables.create(game.world.randomX, game.world.randomY, 'goldstar');
                 currentStar = game.add.sprite(game.world.randomX, game.world.randomY, 'goldstar');
-                game.physics.p2.enable(currentStar);
+                game.physics.p2.enable(currentStar, app.debug);
                 this.rocket.ship.body.createBodyCallback(currentStar, pickUpStar, that);
             }
 
             this.cursors = game.input.keyboard.createCursorKeys();
+
+            game.physics.p2.setImpactEvents(true);
 
             game.camera.follow(this.rocket.ship);
         },
