@@ -6,9 +6,7 @@ define(['Phaser'], function (Phaser) {
 		create : function () {
 			var game = app.game;
 
-			this.background = game.add.sprite(game.world.centerX, game.world.centerY, 'background');
-	    	this.background.scale.setTo(8,6);
-	    	this.background.anchor.setTo(0.5, 0.5);
+			game.stage.backgroundColor = '#5E3F6B';
 
 			this.icon = game.add.sprite(game.world.centerX, game.world.centerY - 100, 'icon');
 		    this.icon.anchor.setTo(0.5,0.5);

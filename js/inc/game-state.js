@@ -39,9 +39,10 @@ define([
 
 
 
-		    for (var i = 0; i < 200; i++)
+		    for (var i = 0; i < 50; i++)
 		    {
-		        game.add.sprite(game.world.randomX, game.world.randomY, 'mushroom');
+		        game.add.sprite(game.world.randomX, game.world.randomY, 'small-star');
+		        game.add.sprite(game.world.randomX, game.world.randomY, 'big-star');
 		    }
 	    	// this.bodies
 	    	this.bodies = game.add.group();
