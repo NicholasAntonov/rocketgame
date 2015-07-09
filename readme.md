@@ -2,6 +2,8 @@
 
 A halfassed title for a halfassed game
 
+###[link to game](http://nicholasantonov.github.io/rocketgame/)
+
 ## Running instructions
 
 * Clone
